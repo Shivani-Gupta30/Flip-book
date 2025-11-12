@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta charset="UTF-8">
+    <title>Travel-Magzin</title>
+    <link rel="icon" href="/Cover.jpg" type="image/x-icon">
+    <script src="jquery.js"></script>
+    <script src="turn.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9GX9CZ2HQ5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-9GX9CZ2HQ5');
+    </script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .zoom-container {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 60px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .flipbook {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .page img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* === Enhanced Index Page === */
+        .index-page {
+            background: linear-gradient(135deg, #f9fbfd 0%, #eef2f7 100%);
+            padding: 40px 20px;
+            text-align: center;
+            font-family: Georgia, serif;
+        }
+
+        .index-page h2 {
+            color: #2c3e50;
+            font-size: 2.4em;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .index-page ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 auto;
+            max-width: 620px;
+        }
+
+        .index-page li {
+            margin: 14px 0;
+            padding: 14px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 1px;
+            cursor: pointer;
+        }
+
+        .index-page li:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background: #f8fafc;
+        }
+
+        .index-page a {
+            color: #2d3748;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            flex: 1;
+            text-align: left;
+        }
+
+        .index-page a:hover {
+            color: #3182ce;
+        }
+
+        /* Icons for each TOC item */
+        .index-page li::before { content: "📄"; }
+        .index-page li:nth-child(2)::before { content: "🌲"; }
+        .index-page li:nth-child(3)::before { content: "☀️"; }
+        .index-page li:nth-child(4)::before { content: "🏖️"; }
+        .index-page li:nth-child(5)::before { content: "📸"; }
+        .index-page li:nth-child(6)::before { content: "🗾"; }
+        .index-page li:nth-child(7)::before { content: "🏜️"; }
+        .index-page li:nth-child(8)::before { content: "🧭"; }
+        .index-page li:nth-child(9)::before { content: "🌊"; }
+        .index-page li:nth-child(10)::before { content: "🎨"; }
+        .index-page li:nth-child(11)::before { content: "📰"; }
+
+        .index-page li::before {
+            font-size: 1.4em;
+            min-width: 28px;
+            text-align: center;
+        }
+
+        /* === Professional Footer === */
+        #flipbookFooter {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #0b0b0b;
+            color: white;
+            padding: 0 16px;
+            height: 56px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .footer-left, .footer-center, .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-center { gap: 20px; }
+
+        .footer-btn {
+            background: #4a5568;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            height: 40px;
+            transition: all 0.2s ease;
+        }
+
+        .footer-btn:hover {
+            background: #718096;
+            transform: translateY(-1px);
+        }
+
+        /* Footer Icons */
+        #gotoIndexBtn::before { content: "📄"; margin-right: 6px; }
+        #prevBtn::before { content: "◀"; margin-right: 6px; }
+        #nextBtn::before { content: "▶"; margin-right: 6px; }
+        #zoomOutBtn::before { content: "−"; margin-right: 6px; }
+        #zoomInBtn::before { content: "+"; margin-right: 6px; }
+        #fullscreenBtn::before { content: "⛶"; margin-right: 6px; }
+        #firstPageBtn::before { content: "⏮"; margin-right: 6px; }
+        #lastPageBtn::before { content: "⏭"; margin-right: 6px; }
+        #searchBtn::before { content: "🔍"; margin-right: 6px; }
+
+        #pageInfo {
+            background: rgba(255,255,255,0.12);
+            padding: 6px 14px;
+            border-radius: 6px;
+            min-width: 90px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        #thumbnailBtn {
+            background: #4a5568;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            height: 40px;
+            transition: all 0.2s ease;
+        }
+
+        #thumbnailBtn:hover {
+            background: #718096;
+            transform: translateY(-1px);
+        }
+
+        #thumbnailBtn::before {
+            content: "🖼️";
+            margin-right: 6px;
+        }
+
+        /* Thumbnail Modal */
+        .thumbnail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .thumbnail-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .thumbnail-item {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            width: 120px;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .thumbnail-item:hover {
+            border-color: #3182ce;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .thumbnail-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumbnail-item .page-number {
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            text-align: center;
+            padding: 2px 0;
+            font-size: 12px;
+        }
+
+        .thumbnail-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            z-index: 1002;
+        }
+
+        /* Search Input */
+        #searchInput {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 100px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        #searchInput:focus {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .zoom-container { height: calc(100vh - 50px); padding: 12px; }
+            #flipbookFooter { height: 50px; padding: 0 10px; font-size: 13px; }
+            .footer-btn { padding: 6px 10px; min-width: 36px; height: 36px; font-size: 13px; }
+            .footer-btn::before { margin-right: 4px; }
+            #pageInfo { padding: 5px 10px; min-width: 70px; font-size: 13px; }
+            .index-page h2 { font-size: 2em; }
+            .index-page li { padding: 12px 16px; gap: 10px; }
+            .thumbnail-item {
+                width: 100px;
+                height: 150px;
+            }
+        }
+
+        /* Preserve hotspot visibility during dev (optional) */
+        .hotspot {
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body>
+
+<audio id="flipSound" src="flip.mp3" preload="auto"></audio>
+
+<div class="zoom-container">
+    <div class="flipbook">
+        <!-- Cover -->
+        <div class="page"><img src="Cover.jpg" alt="Cover"></div>
+
+        <!-- Index -->
+        <div class="page index-page">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#" onclick="goToPage(2)">Page 1 — Introduction</a></li>
+                <li><a href="#" onclick="goToPage(3)">Page 2 — Misty Lush Forest</a></li>
+                <li><a href="#" onclick="goToPage(4)">Page 3 — Summer Escapes</a></li>
+                <li><a href="#" onclick="goToPage(5)">Page 4 — Vacation</a></li>
+                <li><a href="#" onclick="goToPage(6)">Page 5 — Travel Photography</a></li>
+                <li><a href="#" onclick="goToPage(7)">Page 6 — Discover Japan</a></li>
+                <li><a href="#" onclick="goToPage(8)">Page 7 — Exploring The Desert</a></li>
+                <li><a href="#" onclick="goToPage(9)">Page 8 — Desert Exploration</a></li>
+                <li><a href="#" onclick="goToPage(10)">Page 9 — Beach</a></li>
+                <li><a href="#" onclick="goToPage(11)">Page 10 — A Visual Journey</a></li>
+                <li><a href="#" onclick="goToPage(12)">Page 11 — Travel Magazin</a></li>
+            </ul>
+        </div>
+
+        <!-- Page 2 -->
+        <div class="page" style="position:relative;">
+            <img src="f2.jpg" alt="Page 2">
+            <a href="https://youtu.be/7I-3KJbooaI?feature=shared" target="_blank" class="hotspot"
+               data-original-top="357" data-original-left="45"
+               data-original-width="33.75" data-original-height="21"></a>
+        </div>
+
+        <!-- Page 3 -->
+        <div class="page" style="position:relative;">
+            <img src="f3.jpg" alt="Page 3">
+            <a href="https://youtu.be/7I-3KJbooaI?feature=shared" target="_blank" class="hotspot"
+               data-original-top="50" data-original-left="25" data-original-width="300" data-original-height="200"></a>
+            <a href="https://youtu.be/aJuOa01PI04?feature=shared" target="_blank" class="hotspot"
+               data-original-top="226" data-original-left="25" data-original-width="300" data-original-height="200"></a>
+            <a href="https://x.com/IndiainAustria/status/1937973933447217536" target="_blank" class="hotspot"
+               data-original-top="450" data-original-left="25" data-original-width="300" data-original-height="200"></a>
+        </div>
+
+        <!-- Page 4 -->
+        <div class="page" style="position:relative;">
+            <img src="page.gif" alt="Vacation Page">
+            <a href="https://youtu.be/7I-3KJbooaI?feature=shared" target="_blank" class="hotspot"
+               data-original-top="581" data-original-left="45"
+               data-original-width="121.5" data-original-height="73.5"></a>
+        </div>
+
+        <!-- Page 5 -->
+        <div class="page" style="position:relative;">
+            <img src="f5.jpg" alt="Travel Page">
+            <div style="position:absolute; top:20px; left:20px; color:white; background:rgba(0,0,0,0.5); padding:10px; border-radius:4px;">
+                Welcome to our <a href="https://www.kriya.org/media/en/page6-link" target="_blank" style="color:#fff;">Travel Site</a>!
+            </div>
+        </div>
+
+        <!-- Page 6 -->
+        <div class="page" style="position:relative;">
+            <img src="f6.jpg" alt="Page 6">
+            <a href="https://www.kriya.org/media/en/page6-link" target="_blank" class="hotspot"
+               data-original-top="90" data-original-left="200" data-original-width="238" data-original-height="340"></a>
+        </div>
+
+        <!-- Page 7 -->
+        <div class="page" style="position:relative;">
+            <img src="f7.jpg" alt="Page 7">
+            <a href="https://www.facebook.com/schoenfeldermethode/?locale=de_DE" target="_blank" class="hotspot"
+               data-original-top="40" data-original-left="40" data-original-width="503" data-original-height="280"></a>
+        </div>
+
+        <!-- Page 8 -->
+        <div class="page"><img src="f8.jpg" alt="Page 8"></div>
+
+        <!-- Page 9 -->
+        <div class="page" style="position:relative;">
+            <img src="f9.jpg" alt="Page 9">
+            <a href="https://www.nam-nam.at" target="_blank" class="hotspot"
+               data-original-top="90" data-original-left="230" data-original-width="250" data-original-height="279"></a>
+            <a href="https://www.nam-nam.at/" target="_blank" class="hotspot"
+               data-original-top="635" data-original-left="50" data-original-width="150" data-original-height="9"></a>
+            <a href="https://ganesharestaurant.at/" target="_blank" class="hotspot"
+               data-original-top="650" data-original-left="50" data-original-width="150" data-original-height="9"></a>
+            <a href="https://www.safran.wien/" target="_blank" class="hotspot"
+               data-original-top="665" data-original-left="50" data-original-width="150" data-original-height="9"></a>
+        </div>
+
+        <!-- Page 10 -->
+        <div class="page" style="position:relative;">
+            <img src="f10.jpg" alt="Page 10">
+            <a href="https://x.com/IndiainAustria/status/1920424481035522185" target="_blank" class="hotspot"
+               data-original-top="90" data-original-left="180" data-original-width="302" data-original-height="138"></a>
+            <a href="https://x.com/IndiainAustria/status/1929570932093280420" target="_blank" class="hotspot"
+               data-original-top="230" data-original-left="29" data-original-width="158" data-original-height="168"></a>
+            <a href="https://x.com/IndiainAustria/status/1936864080427458700" target="_blank" class="hotspot"
+               data-original-top="400" data-original-left="190" data-original-width="300" data-original-height="150"></a>
+            <a href="https://www.youtube.com/watch?v=LCstDH5x-mE" target="_blank" class="hotspot"
+               data-original-top="501" data-original-left="39" data-original-width="201" data-original-height="153"></a>
+        </div>
+
+        <!-- Page 11 -->
+        <div class="page"><img src="f11.jpg" alt="Page 11"></div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div id="flipbookFooter">
+    <div class="footer-left">
+        <button id="gotoIndexBtn" class="footer-btn" title="Go to Index">Index</button>
+        <button id="firstPageBtn" class="footer-btn" title="First Page"></button>
+        <button id="lastPageBtn" class="footer-btn" title="Last Page"></button>
+    </div>
+    <div class="footer-center">
+        <button id="prevBtn" class="footer-btn" title="Previous Page">Prev</button>
+        <span id="pageInfo">Page 1 of 1</span>
+        <button id="nextBtn" class="footer-btn" title="Next Page">Next</button>
+        <input type="number" id="searchInput" placeholder="Page" min="1" max="11" style="display:none;">
+        <button id="searchBtn" class="footer-btn" title="Search Page"></button>
+    </div>
+    <div class="footer-right">
+        <button id="thumbnailBtn" class="footer-btn" title="Thumbnails"></button>
+        <button id="zoomOutBtn" class="footer-btn" title="Zoom Out"></button>
+        <button id="zoomInBtn" class="footer-btn" title="Zoom In"></button>
+        <button id="fullscreenBtn" class="footer-btn" title="Toggle Fullscreen">FS</button>
+    </div>
+</div>
+
+<!-- Thumbnail Modal -->
+<div class="thumbnail-modal" id="thumbnailModal">
+    <button class="thumbnail-close" id="thumbnailClose">×</button>
+    <div class="thumbnail-container" id="thumbnailContainer">
+        <!-- Thumbnails will be generated here -->
+    </div>
+</div>
+
+<script>
+    const ORIGINAL_WIDTH = 450;
+    const ORIGINAL_HEIGHT = 700;
+
+    // Generate thumbnails dynamically
+    function generateThumbnails() {
+        const container = document.getElementById('thumbnailContainer');
+        container.innerHTML = ''; // Clear existing thumbnails
+        
+        const totalPages = $('.flipbook').turn('pages');
+        
+        for (let i = 1; i <= totalPages; i++) {
+            const page = $(`.flipbook .page:eq(${i-1})`);
+            const imgSrc = page.find('img').attr('src');
+            
+            const thumbnail = document.createElement('div');
+            thumbnail.className = 'thumbnail-item';
+            thumbnail.onclick = () => goToPage(i);
+            
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.alt = `Page ${i}`;
+            
+            const pageNumber = document.createElement('div');
+            pageNumber.className = 'page-number';
+            pageNumber.textContent = i;
+            
+            thumbnail.appendChild(img);
+            thumbnail.appendChild(pageNumber);
+            container.appendChild(thumbnail);
+        }
+    }
+
+    function resizeFlipbook() {
+        const isMobile = window.innerWidth <= 768;
+        const display = isMobile ? 'single' : 'double';
+        const maxW = isMobile ? window.innerWidth * 0.92 : 450;
+        const ratio = maxW / ORIGINAL_WIDTH;
+        const pageH = ORIGINAL_HEIGHT * ratio;
+        const width = isMobile ? maxW : maxW * 2;
+
+        $('.flipbook').turn('size', width, pageH);
+        $('.flipbook').turn('display', display);
+        repositionHotspots();
+    }
+
+    window.repositionHotspots = function() {
+        $('.hotspot').each(function() {
+            const $el = $(this);
+            const $page = $el.closest('.page');
+            const w = $page.width();
+            const h = $page.height();
+            const sx = w / ORIGINAL_WIDTH;
+            const sy = h / ORIGINAL_HEIGHT;
+
+            $el.css({
+                position: 'absolute',
+                top: ($el.data('original-top') * sy) + 'px',
+                left: ($el.data('original-left') * sx) + 'px',
+                width: ($el.data('original-width') * sx) + 'px',
+                height: ($el.data('original-height') * sy) + 'px',
+                display: 'block',
+                zIndex: 10
+            });
+        });
+    };
+
+    $(document).ready(function() {
+        $('.flipbook').turn({
+            width: 900,
+            height: 700,
+            autoCenter: true,
+            display: window.innerWidth <= 768 ? 'single' : 'double',
+            when: {
+                turning: function() {
+                    const sound = document.getElementById('flipSound');
+                    sound.currentTime = 0;
+                    sound.play().catch(() => {});
+                },
+                turned: function(e, page) {
+                    updatePageInfo(page);
+                    repositionHotspots();
+                }
+            }
+        });
+
+        resizeFlipbook();
+        $(window).on('resize', () => {
+            clearTimeout(window.resizeTimer);
+            window.resizeTimer = setTimeout(resizeFlipbook, 200);
+        });
+        
+        // Initialize thumbnails after flipbook is ready
+        setTimeout(generateThumbnails, 500);
+    });
+
+    // Navigation
+    $('#prevBtn, #nextBtn, #gotoIndexBtn, #firstPageBtn, #lastPageBtn').on('click', function() {
+        if (this.id === 'prevBtn') $('.flipbook').turn('previous');
+        else if (this.id === 'nextBtn') $('.flipbook').turn('next');
+        else if (this.id === 'gotoIndexBtn') $('.flipbook').turn('page', 2);
+        else if (this.id === 'firstPageBtn') $('.flipbook').turn('page', 1);
+        else if (this.id === 'lastPageBtn') {
+            const total = $('.flipbook').turn('pages');
+            $('.flipbook').turn('page', total);
+        }
+    });
+
+    // Search functionality
+    $('#searchBtn').on('click', function() {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput.style.display === 'none') {
+            searchInput.style.display = 'inline-block';
+            searchInput.focus();
+        } else {
+            const page = parseInt(searchInput.value);
+            const total = $('.flipbook').turn('pages');
+            if (!isNaN(page) && page >= 1 && page <= total) {
+                goToPage(page);
+                searchInput.style.display = 'none';
+            }
+        }
+    });
+
+    // Handle Enter key in search input
+    $('#searchInput').on('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const page = parseInt(this.value);
+            const total = $('.flipbook').turn('pages');
+            if (!isNaN(page) && page >= 1 && page <= total) {
+                goToPage(page);
+                this.style.display = 'none';
+            }
+        }
+    });
+
+    // Thumbnail modal
+    $('#thumbnailBtn').on('click', function() {
+        document.getElementById('thumbnailModal').style.display = 'flex';
+        generateThumbnails(); // Regenerate thumbnails in case pages changed
+    });
+
+    $('#thumbnailClose').on('click', function() {
+        document.getElementById('thumbnailModal').style.display = 'none';
+    });
+
+    // Close modal on click outside
+    document.getElementById('thumbnailModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    });
+
+    function goToPage(n) { 
+        $('.flipbook').turn('page', n); 
+        updatePageInfo(n);
+    }
+
+    function updatePageInfo(page) {
+        const total = $('.flipbook').turn('pages');
+        $('#pageInfo').text(`Page ${page} of ${total}`);
+    }
+
+    // Zoom & Pan
+    (function() {
+        let scale = 1, lastScale = 1, tx = 0, ty = 0;
+        let startX, startY, initDist;
+        const container = document.querySelector('.zoom-container');
+
+        function applyTransform() {
+            container.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+            setTimeout(repositionHotspots, 50);
+        }
+
+        container.addEventListener('touchstart', e => {
+            if (e.touches.length === 2) {
+                initDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+                lastScale = scale;
+                e.preventDefault();
+            } else if (e.touches.length === 1 && scale > 1) {
+                startX = e.touches[0].clientX - tx;
+                startY = e.touches[0].clientY - ty;
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        container.addEventListener('touchmove', e => {
+            if (e.touches.length === 2 && initDist) {
+                const dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+                scale = Math.min(3, Math.max(1, lastScale * (dist / initDist)));
+                applyTransform();
+                e.preventDefault();
+            } else if (e.touches.length === 1 && scale > 1) {
+                tx = e.touches[0].clientX - startX;
+                ty = e.touches[0].clientY - startY;
+                applyTransform();
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        container.addEventListener('touchend', () => {
+            initDist = null;
+        });
+
+        let lastTap = 0;
+        container.addEventListener('touchend', e => {
+            const now = Date.now();
+            if (now - lastTap < 300) {
+                scale = 1; tx = 0; ty = 0;
+                applyTransform();
+            }
+            lastTap = now;
+        });
+
+        $('#zoomInBtn').click(() => { scale = Math.min(3, scale + 0.2); applyTransform(); });
+        $('#zoomOutBtn').click(() => { scale = Math.max(1, scale - 0.2); applyTransform(); });
+
+        $('#fullscreenBtn').click(() => {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else document.exitFullscreen();
+        });
+    })();
+
+    $(document).ready(() => setTimeout(() => updatePageInfo($('.flipbook').turn('page')), 500));
+
+    // Analytics
+    document.querySelectorAll('.hotspot').forEach(link => {
+        link.addEventListener('click', () => {
+            gtag('event', 'magazine_hotspot_click', {
+                'page_number': $('.flipbook').turn('page'),
+                'link_url': link.href
+            });
+        });
+    });
+
+    $('.flipbook').on('turned', (e, page) => {
+        gtag('event', 'magazine_page_turn', { 'page_number': page });
+    });
+</script>
+</body>
+</html>
